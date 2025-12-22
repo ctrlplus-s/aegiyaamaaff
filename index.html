@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surat Untukmu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #F5F5DC;
+            --coffee-brown: #4B3621;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-cream);
+            font-family: 'Caveat', cursive;
+            color: var(--coffee-brown);
+            overflow-x: hidden;
+        }
+
+        /* Layar Pembuka */
+        #overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-cream);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 1s ease;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            background: transparent;
+            border: 2px solid var(--coffee-brown);
+            color: var(--coffee-brown);
+            cursor: pointer;
+            border-radius: 50px;
+            transition: 0.4s;
+        }
+
+        button:hover {
+            background: var(--coffee-brown);
+            color: var(--bg-cream);
+            transform: scale(1.1);
+        }
+
+        /* Bingkai */
+        .decoration {
+            position: fixed;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            border: 15px solid var(--coffee-brown);
+            box-sizing: border-box;
+            opacity: 0.05;
+        }
+
+        /* Konten Surat */
+        .letter-container {
+            max-width: 650px;
+            width: 85%;
+            padding: 50px 20px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.6;
+            display: none;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+
+        #text-wrapper {
+            font-size: 1.6rem;
+            text-align: left;
+            white-space: pre-wrap; /* Menjaga spasi paragraf */
+        }
+
+        /* Animasi Per Kata */
+        .word {
+            display: inline-block;
+            opacity: 0;
+            filter: blur(8px);
+            transform: translateY(15px);
+            animation: slowReveal 1s ease-out forwards;
+            margin-right: 6px;
+        }
+
+        @keyframes slowReveal {
+            to { 
+                opacity: 1; 
+                filter: blur(0); 
+                transform: translateY(0); 
+            }
+        }
+
+        .highlight { 
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            #text-wrapper { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <button onclick="startLetter()">Buka Surat</button>
+    </div>
+
+    <audio id="backsound" loop>
+        <source src="https://files.catbox.moe/n5buru.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="decoration"></div>
+
+    <div class="letter-container" id="main-content">
+        <h1>igeos-eun naui sagwaibnida, aegiya.</h1>
+        <div id="text-wrapper"></div>
+    </div>
+
+    <script>
+        // Teks asli dengan tatanan paragraf yang lebih rapi
+        const message = `semisal aku taruhin kamuu, tuh juga biar apaaaaa, huhhhh????, juga taruhan apaaaa???? sama siapaaa????, aku tuh beneran suka samaaa kamuuuu, sayang sama kamuuu, kalo engga beneran kenapa kok aku bela belain tiap pulang sekolah aku pergi kerumah temenku cuma buat pinjam hpnyaa dannn kena takzirannn????
+
+semisal nih kalo kamu engga percaya kalo kamu engga aku taruhinnn,tanya se pondok putraaaa, ngapain aku post kamu ke ig? kalo kamu tuh cuma taruhannn????????
+
+"KAMU TUH BENERAN PACAR PERTAMA KU"
+
+dan itu engga boongggg, ya kaliii pacar pertama ku aku taruhinnnn, kan engga makesense,plis deh sayangg, percaya sama akuuu, aku tuh beneran saaayaangg sama kamuuu, 
+
+sekarang kamu mungkin butuh nenangin diri, okeyyy, gapapaaa, nanti kalo udah tenang chat akuuu, kalo hpnyaa aku bawa pasti aku jawab langsungggg, benerannn,
+
+Kalo kamu sangkut sangkutin KAMU sama CRUSH KU YANG DULU, itu beda jauhh sayaanggg
+
+MAAFFF, SOAL KEMARENN KAN AKU JUGA BILANG KANNN, SEMOGA HABIS INI ENGGA DIPAKE LAGII, DAN TERNYATA BAPAK KU PULANG DAN LANGSUNG DIAMBIL HPNYAAA, KAMU KEDENGARAN KANNNN, 
+
+MAAF SAYAAANGGG`;
+
+        function startLetter() {
+            const overlay = document.getElementById('overlay');
+            overlay.style.opacity = '0';
+            
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                
+                const audio = document.getElementById('backsound');
+                audio.play();
+                
+                animateText();
+            }, 1000);
+        }
+
+        function animateText() {
+            const wrapper = document.getElementById('text-wrapper');
+            // Regex untuk memisahkan kata sambil menjaga baris baru (\n)
+            const words = message.split(/(\s+)/); 
+            
+            words.forEach((word, index) => {
+                const span = document.createElement('span');
+                
+                if (word.trim().length > 0) {
+                    span.classList.add('word');
+                    span.style.animationDelay = `${(index * 0.35)}s`;
+                    
+                    // Menandai teks kapital atau tanda kutip agar lebih tegas
+                    if (word.includes('"') || (word === word.toUpperCase() && word.length > 3)) {
+                        span.classList.add('highlight');
+                    }
+                    span.textContent = word;
+                    wrapper.appendChild(span);
+                } else if (word === "\n") {
+                    // Jika itu adalah baris baru, tambahkan elemen break
+                    const br = document.createElement('br');
+                    wrapper.appendChild(br);
+                } else {
+                    // Untuk spasi biasa
+                    wrapper.appendChild(document.createTextNode(word));
+                }
+            });
+        }
+    </script>
+</body>
+  </html>
+      
